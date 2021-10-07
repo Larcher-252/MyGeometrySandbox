@@ -19,7 +19,7 @@ void ABaseGeometryActor::BeginPlay()
 {
 	Super::BeginPlay();
 	PrintMyStatsInLog();
-	PrintMyStatsOnScreen();
+	//PrintMyStatsOnScreen();
 }
 
 // Called every frame
@@ -30,22 +30,16 @@ void ABaseGeometryActor::Tick(float DeltaTime)
 
 void ABaseGeometryActor::PrintMyStatsInLog()
 {
-	float Health = 33.57f;
-	int Ammo = 100;
-	bool IsDead = false;
-
-	UE_LOG(StatisticPrompts, Display, TEXT("Health: %.2f"), Health);
-	UE_LOG(StatisticPrompts, Display, TEXT("Ammo: %d"), Ammo);
-	UE_LOG(StatisticPrompts, Display, TEXT("Is dead: %d"), IsDead);
+	UE_LOG(StatisticPrompts, Warning, TEXT("Actor's name: %s"), *GetName());
+	UE_LOG(StatisticPrompts, Warning, TEXT("Health: %.2f"), Health);
+	UE_LOG(StatisticPrompts, Warning, TEXT("Ammo: %d"), Ammo);
+	UE_LOG(StatisticPrompts, Warning, TEXT("Is dead: %d"), IsDead);
 }
 
 void ABaseGeometryActor::PrintMyStatsOnScreen()
 {
-	float Healt = 75.5f;
-	FString StringHealth = "HP = " + FString::SanitizeFloat(Healt);
-	int Ammo = 200;
+	FString StringHealth = "HP = " + FString::SanitizeFloat(Health);
 	FString StringAmmo = "AMMO = " + FString::FromInt(Ammo);
-	bool IsDead = false;
 	FString StringIsDead = "Is dead = " + FString(IsDead ? "true" : "false");
 
 	FString StatString = FString::Printf(TEXT("--All stat--\n %s \n %s \n %s"), *StringHealth, *StringAmmo, *StringIsDead);
