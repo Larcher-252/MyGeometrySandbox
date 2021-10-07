@@ -2,6 +2,9 @@
 
 
 #include "BaseGeometryActor.h"
+#include "Engine/Engine.h"
+
+DEFINE_LOG_CATEGORY_STATIC(StatisticPrompts, All, All)
 
 // Sets default values
 ABaseGeometryActor::ABaseGeometryActor()
@@ -15,31 +18,38 @@ ABaseGeometryActor::ABaseGeometryActor()
 void ABaseGeometryActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	UE_LOG(LogTemp, Display, TEXT("Hello world!"));
-	UE_LOG(LogTemp, Warning, TEXT("Hello warning world!"));
-	UE_LOG(LogTemp, Error, TEXT("Hello error world!"));
-
-	PrintMyStats();
+	PrintMyStatsInLog();
+	PrintMyStatsOnScreen();
 }
 
 // Called every frame
 void ABaseGeometryActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
-void ABaseGeometryActor::PrintMyStats()
+void ABaseGeometryActor::PrintMyStatsInLog()
 {
 	float Health = 33.57f;
-	int WeaponsCount = 4;
 	int Ammo = 100;
 	bool IsDead = false;
 
-	UE_LOG(LogTemp, Display, TEXT("Health: %.2f"), Health);
-	UE_LOG(LogTemp, Display, TEXT("Count of weapons: %d"), WeaponsCount);
-	UE_LOG(LogTemp, Display, TEXT("Ammo: %d"), Ammo);
-	UE_LOG(LogTemp, Display, TEXT("Is dead: %d"), IsDead);
+	UE_LOG(StatisticPrompts, Display, TEXT("Health: %.2f"), Health);
+	UE_LOG(StatisticPrompts, Display, TEXT("Ammo: %d"), Ammo);
+	UE_LOG(StatisticPrompts, Display, TEXT("Is dead: %d"), IsDead);
+}
+
+void ABaseGeometryActor::PrintMyStatsOnScreen()
+{
+	float Healt = 75.5f;
+	FString StringHealth = "HP = " + FString::SanitizeFloat(Healt);
+	int Ammo = 200;
+	FString StringAmmo = "AMMO = " + FString::FromInt(Ammo);
+	bool IsDead = false;
+	FString StringIsDead = "Is dead = " + FString(IsDead ? "true" : "false");
+
+	FString StatString = FString::Printf(TEXT("--All stat--\n %s \n %s \n %s"), *StringHealth, *StringAmmo, *StringIsDead);
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, StatString, true, FVector2D(1.5f, 1.5f));
 }
 
