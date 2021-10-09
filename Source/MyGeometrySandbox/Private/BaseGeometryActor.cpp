@@ -29,10 +29,7 @@ void ABaseGeometryActor::BeginPlay()
 void ABaseGeometryActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	float ActualTime = GetWorld()->GetTimeSeconds();
-	FVector CurrentLocation = GetActorLocation();
-	CurrentLocation.Z = StartLocation.Z + Amplitude * FMath::Sin(Freq * ActualTime);
-	SetActorLocation(CurrentLocation);
+	ChangeMyLocation();
 }
 
 void ABaseGeometryActor::PrintMyStatsInLog()
@@ -66,5 +63,25 @@ void ABaseGeometryActor::PrintMyTransformInLog()
 	UE_LOG(StatisticPrompts, Error, TEXT("Actor's location: %s"), *MyMeshLocation.ToString());
 	UE_LOG(StatisticPrompts, Error, TEXT("Actor's rotation: %s"), *MyMeshRotator.ToString());
 	UE_LOG(StatisticPrompts, Error, TEXT("Actor's scale: %s"), *MyMeshScale.ToString());
+}
+
+void ABaseGeometryActor::ChangeMyLocation()
+{
+	switch (MovementData.MoveType)
+	{
+	case EMovementType::Static:
+	{
+		break;
+	}
+	case EMovementType::Sin:
+	{
+		float ActualTime = GetWorld()->GetTimeSeconds();
+		FVector CurrentLocation = GetActorLocation();
+		CurrentLocation.Z = StartLocation.Z + MovementData.Amplitude * FMath::Sin(MovementData.Freq * ActualTime);
+		SetActorLocation(CurrentLocation);
+		break;
+	}
+	default: break;
+	}
 }
 

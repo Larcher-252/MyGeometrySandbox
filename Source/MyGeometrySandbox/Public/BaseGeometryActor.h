@@ -7,11 +7,30 @@
 #include "Components/StaticMeshComponent.h"
 #include "BaseGeometryActor.generated.h"
 
+UENUM(BlueprintType)
+enum class EMovementType :uint8
+{
+	Static,
+	Sin
+};
+
+USTRUCT(BlueprintType)
+struct FGeometryData
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, Category = "Move")
+	float Amplitude = 50;
+	UPROPERTY(EditAnywhere, Category = "Move")
+	float Freq = 5;
+	UPROPERTY(EditAnywhere, Category = "Move")
+	EMovementType MoveType = EMovementType::Static;
+};
+
 UCLASS()
 class MYGEOMETRYSANDBOX_API ABaseGeometryActor : public AActor
 {
 	GENERATED_BODY()
-	
 public:	
 	// Sets default values for this actor's properties
 	ABaseGeometryActor();
@@ -20,7 +39,9 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	// Movement
+	UPROPERTY(EditAnywhere, Category = "Move")
+	FGeometryData MovementData;
 	// Some stats
 	UPROPERTY(EditInstanceOnly, Category = "Health")
 		float Health = 75.5f;
@@ -28,12 +49,6 @@ protected:
 		int32 Ammo = 200;
 	UPROPERTY(VisibleAnywhere, Category = "Health")
 		bool IsDead = false;
-	// For location
-	UPROPERTY(EditAnywhere, Category = "SinLoc")
-	float Amplitude = 50;
-	UPROPERTY(EditAnywhere, Category = "SinLoc")
-	float Freq = 5;
-
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -42,4 +57,5 @@ private:
 	void PrintMyStatsInLog();
 	void PrintMyStatsOnScreen();
 	void PrintMyTransformInLog();
+	void ChangeMyLocation();
 };
