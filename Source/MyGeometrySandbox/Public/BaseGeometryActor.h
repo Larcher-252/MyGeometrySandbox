@@ -45,6 +45,8 @@ public:
 	ABaseGeometryActor();
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	UStaticMeshComponent* MyStaticMesh;
+
+	void SetGeometryData(const FGeometryData& Data) {MovementData = Data;};
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

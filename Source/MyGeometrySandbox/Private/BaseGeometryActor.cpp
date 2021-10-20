@@ -53,7 +53,10 @@ void ABaseGeometryActor::PrintMyStatsOnScreen()
 
 	FString StatString = FString::Printf(TEXT("--All stat--\n %s \n %s \n %s"), *StringHealth, *StringAmmo, *StringIsDead);
 
-	GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, StatString, true, FVector2D(1.5f, 1.5f));
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, StatString, true, FVector2D(1.5f, 1.5f));	
+	}
 }
 
 void ABaseGeometryActor::PrintMyTransformInLog()
@@ -76,15 +79,18 @@ void ABaseGeometryActor::ChangeMyLocation()
 	{
 	case EMovementType::Static:
 	{
-		break;
+			break;
 	}
 	case EMovementType::Sin:
 	{
-		float ActualTime = GetWorld()->GetTimeSeconds();
-		FVector CurrentLocation = GetActorLocation();
-		CurrentLocation.Z = StartLocation.Z + MovementData.Amplitude * FMath::Sin(MovementData.Freq * ActualTime);
-		SetActorLocation(CurrentLocation);
-		break;
+			if (GetWorld())
+			{
+				float ActualTime = GetWorld()->GetTimeSeconds();
+				FVector CurrentLocation = GetActorLocation();
+				CurrentLocation.Z = StartLocation.Z + MovementData.Amplitude * FMath::Sin(MovementData.Freq * ActualTime);
+				SetActorLocation(CurrentLocation);
+			}
+			break;
 	}
 	default: break;
 	}
