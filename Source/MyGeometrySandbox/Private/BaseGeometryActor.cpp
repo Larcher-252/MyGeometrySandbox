@@ -4,6 +4,7 @@
 #include "BaseGeometryActor.h"
 #include "Engine/Engine.h"
 #include "Materials/MaterialInstanceDynamic.h"
+#include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(StatisticPrompts, All, All)
 
@@ -25,6 +26,8 @@ void ABaseGeometryActor::BeginPlay()
 	//PrintMyStatsInLog();
 	//PrintMyStatsOnScreen();
 	SetMeshColor(MovementData.MyColor);
+
+	GetWorldTimerManager().SetTimer(TimerName, this, &ABaseGeometryActor::OnTimerFired, MovementData.TimeRate, true);
 }
 
 // Called every frame
@@ -93,6 +96,22 @@ void ABaseGeometryActor::SetMeshColor(const FLinearColor& Color)
 	if (DynMaterial)
 	{
 		DynMaterial->SetVectorParameterValue("Color", Color);
+	}
+}
+
+void ABaseGeometryActor::OnTimerFired()
+{
+	if (++MovementData.TimerCount <= MovementData.MaxTimerCount)
+	{
+		const FLinearColor NewColor = FLinearColor::MakeRandomColor();
+		UE_LOG(StatisticPrompts, Error, TEXT("Timer's count: %i"), MovementData.TimerCount);
+		UE_LOG(StatisticPrompts, Error, TEXT("Actor's new color: %s"), *NewColor.ToString());
+		SetMeshColor(NewColor);
+	}
+	else
+	{
+		UE_LOG(StatisticPrompts, Error, TEXT("Timer has been stoped"));
+		GetWorldTimerManager().ClearTimer(TimerName);
 	}
 }
 

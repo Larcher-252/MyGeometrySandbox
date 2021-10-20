@@ -25,8 +25,15 @@ struct FGeometryData
 	float Freq = 5;
 	UPROPERTY(EditAnywhere, Category = "Move")
 	EMovementType MoveType = EMovementType::Static;
+	
 	UPROPERTY(EditAnywhere, Category = "Design")
 	FLinearColor MyColor = FLinearColor::Yellow;
+	
+	UPROPERTY(EditAnywhere, Category = "Time")
+	float TimeRate = 3.0f;
+	UPROPERTY(EditAnywhere, Category = "Time")
+	int32 MaxTimerCount = 5;
+	int32 TimerCount = 0;
 };
 
 UCLASS()
@@ -56,9 +63,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 private:
 	FVector StartLocation;
+	FTimerHandle TimerName;
 	void PrintMyStatsInLog();
 	void PrintMyStatsOnScreen();
 	void PrintMyTransformInLog();
 	void ChangeMyLocation();
 	void SetMeshColor(const FLinearColor& Color);
+	void OnTimerFired();
 };
