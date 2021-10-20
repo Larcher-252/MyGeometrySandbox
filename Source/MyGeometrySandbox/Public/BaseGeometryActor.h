@@ -25,6 +25,8 @@ struct FGeometryData
 	float Freq = 5;
 	UPROPERTY(EditAnywhere, Category = "Move")
 	EMovementType MoveType = EMovementType::Static;
+	UPROPERTY(EditAnywhere, Category = "Design")
+	FLinearColor MyColor = FLinearColor::Yellow;
 };
 
 UCLASS()
@@ -58,4 +60,5 @@ private:
 	void PrintMyStatsOnScreen();
 	void PrintMyTransformInLog();
 	void ChangeMyLocation();
+	void SetMeshColor(const FLinearColor& Color);
 };

@@ -3,6 +3,7 @@
 
 #include "BaseGeometryActor.h"
 #include "Engine/Engine.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 DEFINE_LOG_CATEGORY_STATIC(StatisticPrompts, All, All)
 
@@ -23,6 +24,7 @@ void ABaseGeometryActor::BeginPlay()
 	//PrintMyTransformInLog();
 	//PrintMyStatsInLog();
 	//PrintMyStatsOnScreen();
+	SetMeshColor(MovementData.MyColor);
 }
 
 // Called every frame
@@ -82,6 +84,15 @@ void ABaseGeometryActor::ChangeMyLocation()
 		break;
 	}
 	default: break;
+	}
+}
+
+void ABaseGeometryActor::SetMeshColor(const FLinearColor& Color)
+{
+	UMaterialInstanceDynamic* DynMaterial = MyStaticMesh->CreateAndSetMaterialInstanceDynamic(0);
+	if (DynMaterial)
+	{
+		DynMaterial->SetVectorParameterValue("Color", Color);
 	}
 }
 
