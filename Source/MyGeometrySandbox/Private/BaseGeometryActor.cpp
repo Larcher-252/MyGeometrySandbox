@@ -2,11 +2,20 @@
 
 
 #include "BaseGeometryActor.h"
+
+#include <string>
+
 #include "Engine/Engine.h"
 #include "Materials/MaterialInstanceDynamic.h"
 #include "TimerManager.h"
 
 DEFINE_LOG_CATEGORY_STATIC(StatisticPrompts, All, All)
+
+FString FGeometryData::ToString()
+{
+	FString Info = "";
+	return Info;
+}
 
 // Sets default values
 ABaseGeometryActor::ABaseGeometryActor()
@@ -28,6 +37,12 @@ void ABaseGeometryActor::BeginPlay()
 	SetMeshColor(MovementData.MyColor);
 
 	GetWorldTimerManager().SetTimer(TimerName, this, &ABaseGeometryActor::OnTimerFired, MovementData.TimeRate, true);
+}
+
+void ABaseGeometryActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	UE_LOG(StatisticPrompts, Error, TEXT("Actor's destroyed"));
+	Super::EndPlay(EndPlayReason);
 }
 
 // Called every frame
@@ -98,10 +113,13 @@ void ABaseGeometryActor::ChangeMyLocation()
 
 void ABaseGeometryActor::SetMeshColor(const FLinearColor& Color)
 {
-	UMaterialInstanceDynamic* DynMaterial = MyStaticMesh->CreateAndSetMaterialInstanceDynamic(0);
-	if (DynMaterial)
+	if (MyStaticMesh)
 	{
-		DynMaterial->SetVectorParameterValue("Color", Color);
+		UMaterialInstanceDynamic* DynMaterial = MyStaticMesh->CreateAndSetMaterialInstanceDynamic(0);
+		if (DynMaterial)
+		{
+			DynMaterial->SetVectorParameterValue("Color", Color);
+		}	
 	}
 }
 
@@ -113,11 +131,12 @@ void ABaseGeometryActor::OnTimerFired()
 		UE_LOG(StatisticPrompts, Error, TEXT("Timer's count: %i"), MovementData.TimerCount);
 		UE_LOG(StatisticPrompts, Error, TEXT("Actor's new color: %s"), *NewColor.ToString());
 		SetMeshColor(NewColor);
+		OnColorChanged.Broadcast(NewColor, GetName());
 	}
 	else
 	{
 		UE_LOG(StatisticPrompts, Error, TEXT("Timer has been stoped"));
 		GetWorldTimerManager().ClearTimer(TimerName);
+		OnTimerFinished.Broadcast(this);
 	}
 }
-

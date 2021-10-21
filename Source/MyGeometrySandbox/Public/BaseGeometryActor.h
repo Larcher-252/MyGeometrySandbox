@@ -7,6 +7,9 @@
 #include "Components/StaticMeshComponent.h"
 #include "BaseGeometryActor.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnColorChanged, const FLinearColor&, Color, const FString&, Name);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnTimerFinished, AActor*);
+
 UENUM(BlueprintType)
 enum class EMovementType :uint8
 {
@@ -19,21 +22,23 @@ struct FGeometryData
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Move")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
 	float Amplitude = 50;
-	UPROPERTY(EditAnywhere, Category = "Move")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
 	float Freq = 5;
-	UPROPERTY(EditAnywhere, Category = "Move")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
 	EMovementType MoveType = EMovementType::Static;
 	
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	FLinearColor MyColor = FLinearColor::Yellow;
 	
 	UPROPERTY(EditAnywhere, Category = "Time")
 	float TimeRate = 3.0f;
-	UPROPERTY(EditAnywhere, Category = "Time")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Time")
 	int32 MaxTimerCount = 5;
 	int32 TimerCount = 0;
+
+	FString ToString();
 };
 
 UCLASS()
@@ -47,11 +52,17 @@ public:
 	UStaticMeshComponent* MyStaticMesh;
 
 	void SetGeometryData(const FGeometryData& Data) {MovementData = Data;};
+	UFUNCTION(BlueprintCallable)
+	FGeometryData GetGeometryData() const {return MovementData;};
+
+	UPROPERTY(BlueprintAssignable)
+	FOnColorChanged OnColorChanged;
+	FOnTimerFinished OnTimerFinished;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	// Movement
-	UPROPERTY(EditAnywhere, Category = "Move")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
 	FGeometryData MovementData;
 	// Some stats
 	UPROPERTY(EditInstanceOnly, Category = "Health")
@@ -60,6 +71,8 @@ protected:
 		int32 Ammo = 200;
 	UPROPERTY(VisibleAnywhere, Category = "Health")
 		bool IsDead = false;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

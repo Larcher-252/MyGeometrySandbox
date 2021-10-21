@@ -4,6 +4,8 @@
 #include "GeometryHub.h"
 #include "Engine/World.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogGeometryHub, All, All)
+
 // Sets default values
 AGeometryHub::AGeometryHub()
 {
@@ -16,7 +18,7 @@ AGeometryHub::AGeometryHub()
 void AGeometryHub::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnActor1();
+	//SpawnActor1();
 	SpawnActor2();
 }
 
@@ -58,9 +60,31 @@ void AGeometryHub::SpawnActor2()
 			if (GeomActor)
 			{
 				GeomActor->SetGeometryData(GData.SData);
+				GeomActor->OnColorChanged.AddDynamic(this, &AGeometryHub::OnColorChanged);
+				GeomActor->OnTimerFinished.AddUObject(this, &AGeometryHub::OnTimerFinished);
 				GeomActor->FinishSpawning(GData.STransform);
 			}
 		}
 	}
 }
 
+void AGeometryHub::OnColorChanged(const FLinearColor& Color, const FString& Name)
+{
+	UE_LOG(LogGeometryHub, Warning, TEXT("%s's new color: %s"), *Name, *Color.ToString());
+}
+
+void AGeometryHub::OnTimerFinished(AActor* Actor)
+{
+	if(Actor)
+	{
+		UE_LOG(LogGeometryHub, Error, TEXT("%s's timer stoped"), *Actor->GetName());
+
+		ABaseGeometryActor* MyActor = Cast<ABaseGeometryActor>(Actor);
+		if (!MyActor) return;
+		UE_LOG(LogGeometryHub, Error, TEXT("Cast was successful"));
+		//Destroy actor
+		MyActor->Destroy();
+		//Seconds to destroy actor
+		//MyActor->SetLifeSpan(2.0f);
+	}
+}
